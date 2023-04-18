@@ -13,12 +13,11 @@
     <div class="row">
         <div class="col-xs-12">
             <!-- PAGE CONTENT BEGINS -->
-            <form class="form-horizontal" role="form" action="" method="post" name="myfrom" >
+            <form class="form-horizontal" role="form" action="{:url("newssave","id=$news[id]")}" method="post" name="myfrom" >
                 <div class="form-group">
                     <label class="col-sm-3 control-label no-padding-right"> 新闻标题 </label>
-
                     <div class="col-sm-9">
-                        <input type="password" name="password" placeholder="Password" class="col-xs-10 col-sm-5" />
+                        <input type="text" name="title" value="{$news.sTitle}" placeholder="" class="col-xs-10 col-sm-5" />
                         <span class="help-inline col-xs-12 col-sm-7">
                             <span class="middle"></span>
                         </span>
@@ -30,27 +29,10 @@
                     <label class="col-sm-3 control-label no-padding-right"> 新闻内容 </label>
 
                     <div class="col-sm-9">
-                        <input type="password" name="rpassword" placeholder="Password" class="col-xs-10 col-sm-5" />
-                        <span class="help-inline col-xs-12 col-sm-7">
-                            <span class="middle"></span>
-                        </span>
+                        <textarea name="content" class="col-xs-10 col-sm-5">{$news.sContent}</textarea>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right">邮箱</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="col-xs-10 col-sm-5" name="email" value='{$info.email|default=''}'/>
-
-                    </div>
-                </div>    
-                <div class="space-4"></div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right">手机号</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="col-xs-10 col-sm-5" name="mobile"  value='{$info.mobile|default=''}'/>
-                    </div>
-                </div>    
                 <div class="space-4"></div>
                 <div class="space-4"></div>
                 <input type="hidden" name="dosubmit" value="1">

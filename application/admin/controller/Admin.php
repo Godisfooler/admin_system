@@ -171,7 +171,6 @@ class Admin extends Common {
        $newsList = db('news_list')->select();
        $this->assign('newslist', $newsList);
        return $this->fetch();
-       var_dump($newsList);exit;
     }
 
     //删除新闻
@@ -179,14 +178,41 @@ class Admin extends Common {
         $id = input('id');
         $res = db('news_list')->where(['id' => $id])->delete();
         if ($res) {
-            $this->success('删除成功', url('newslist'),1);
+            $this->success('删除成功', url('newslist'),'',1);
         } else {
-            $this->error('删除失败');
+            $this->error('删除失败',null,'',1);
         }
     }
 
     //新闻详情
     public function newsdetail(){
+        $id = input('id');
+        if(!empty($id)){
+            $news = db('news_list')->find($id);
+            $this->assign('news',$news);
+            $this->assign('title','编辑新闻');
+        }else{
+            $this->assign('title','发布新闻');
+        }
         return $this->fetch();
+    }
+
+    //新闻保存
+    public function newssave(){
+        $id = input('id');
+        $data = [];
+        $data['sTitle'] = input('title');
+        $data['sContent'] = input('content');
+        $data['iAddTime'] = time();
+        if(!empty($id)){
+            $res = db('news_list')->where(['id'=>$id])->update($data);
+        }else{
+            $res = db('news_list')->insert($data);
+        }
+        if ($res) {
+            $this->success('修改成功', url('newslist'),'',1);
+        } else {
+            $this->error('修改失败',null,'',1);
+        }
     }
 }
