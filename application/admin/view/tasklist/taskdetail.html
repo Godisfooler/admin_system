@@ -2,10 +2,10 @@
    
     <div class="page-header">
         <h1>
-            个人设置
+            任务管理
             <small>
                 <i class="ace-icon fa fa-angle-double-right"></i>
-                修改信息
+                编辑任务
             </small>
         </h1>
     </div><!-- /.page-header -->
@@ -13,21 +13,11 @@
     <div class="row">
         <div class="col-xs-12">
             <!-- PAGE CONTENT BEGINS -->
-            <form class="form-horizontal" role="form" action="" method="post" name="myfrom" >
+            <form class="form-horizontal" role="form" action="{:url("tasksave","id=$task[id]")}" method="post" name="myfrom" >
                 <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right">用户名</label>
+                    <label class="col-sm-3 control-label no-padding-right"> 任务标题 </label>
                     <div class="col-sm-9">
-                        {$info.username|default=''}
-                    </div>
-                </div>    
-                <div class="space-4"></div>
-
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right"> 密码 </label>
-
-                    <div class="col-sm-9">
-                        <input type="password" name="password" placeholder="Password" class="col-xs-10 col-sm-5" />
+                        <input type="text" name="sTaskTitle" value="{$task.sTaskTitle}" placeholder="" class="col-xs-10 col-sm-5" />
                         <span class="help-inline col-xs-12 col-sm-7">
                             <span class="middle"></span>
                         </span>
@@ -36,37 +26,33 @@
                 <div class="space-4"></div>
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right"> 确认密码 </label>
-
+                    <label class="col-sm-3 control-label no-padding-right"> 任务内容 </label>
                     <div class="col-sm-9">
-                        <input type="password" name="rpassword" placeholder="Password" class="col-xs-10 col-sm-5" />
-                        <span class="help-inline col-xs-12 col-sm-7">
-                            <span class="middle"></span>
-                        </span>
+                        <textarea name="sTaskContent" class="col-xs-10 col-sm-5">{$task.sTaskContent}</textarea>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right">邮箱</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="col-xs-10 col-sm-5" name="email" value='{$info.email|default=''}'/>
-
-                    </div>
-                </div>    
                 <div class="space-4"></div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right">手机号</label>
+                    <label class="col-sm-3 control-label no-padding-right"> 任务位置 </label>
                     <div class="col-sm-9">
-                        <input type="text" class="col-xs-10 col-sm-5" name="mobile"  value='{$info.mobile|default=''}'/>
+                        <input type="text" name="sLocation" value="{$task.sLocation}" placeholder="" class="col-xs-10 col-sm-5" />
                     </div>
-                </div>    
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right"> 联系方式 </label>
+                    <div class="col-sm-9">
+                        <input type="text" name="sContact" value="{$task.sContact}" placeholder="" class="col-xs-10 col-sm-5" />
+                    </div>
+                </div>
                 <div class="space-4"></div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right">真实姓名</label>
+                    <label class="col-sm-3 control-label no-padding-right"> 任务状态 </label>
                     <div class="col-sm-9">
-                        <input type="text" class="col-xs-10 col-sm-5" name="realname"  value='{$info.realname|default=''}'/>
+                        {:select($statusArr,$task['iStatus'],'name="iStatus" class="col-xs-10 col-sm-5"')}
+                        <!-- <input type="text" name="sContact" value="{$task.sContact}" placeholder="" class="col-xs-10 col-sm-5" /> -->
+                        <!-- <textarea name="content" class="col-xs-10 col-sm-5">{$task.iStatus}</textarea> -->
                     </div>
-                </div>    
+                </div>
                 <div class="space-4"></div>
                 <input type="hidden" name="dosubmit" value="1">
                 <div class="clearfix form-actions">
