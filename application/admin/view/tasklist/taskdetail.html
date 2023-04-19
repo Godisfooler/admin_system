@@ -1,0 +1,75 @@
+<div class="page-content">
+   
+    <div class="page-header">
+        <h1>
+            任务管理
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                编辑任务
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <form class="form-horizontal" role="form" action="{:url("tasksave","id=$task[id]")}" method="post" name="myfrom" >
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right"> 任务标题 </label>
+                    <div class="col-sm-9">
+                        <input type="text" name="sTaskTitle" value="{$task.sTaskTitle}" placeholder="" class="col-xs-10 col-sm-5" />
+                        <span class="help-inline col-xs-12 col-sm-7">
+                            <span class="middle"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right"> 任务内容 </label>
+                    <div class="col-sm-9">
+                        <textarea name="sTaskContent" class="col-xs-10 col-sm-5">{$task.sTaskContent}</textarea>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right"> 任务位置 </label>
+                    <div class="col-sm-9">
+                        <input type="text" name="sLocation" value="{$task.sLocation}" placeholder="" class="col-xs-10 col-sm-5" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right"> 联系方式 </label>
+                    <div class="col-sm-9">
+                        <input type="text" name="sContact" value="{$task.sContact}" placeholder="" class="col-xs-10 col-sm-5" />
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right"> 任务状态 </label>
+                    <div class="col-sm-9">
+                        {:select($statusArr,$task['iStatus'],'name="iStatus" class="col-xs-10 col-sm-5"')}
+                        <!-- <input type="text" name="sContact" value="{$task.sContact}" placeholder="" class="col-xs-10 col-sm-5" /> -->
+                        <!-- <textarea name="content" class="col-xs-10 col-sm-5">{$task.iStatus}</textarea> -->
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <input type="hidden" name="dosubmit" value="1">
+                <div class="clearfix form-actions">
+                    <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-info" type="button" onclick="myfrom.submit()">
+                            <i class="ace-icon fa fa-check bigger-110"></i>
+                            提交
+                        </button>
+                        &nbsp; &nbsp; &nbsp;
+                        <button class="btn" type="reset">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- PAGE CONTENT ENDS -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+</div><!-- /.page-content -->
