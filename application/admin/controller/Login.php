@@ -15,15 +15,15 @@ class Login extends Controller {
             $username = input('post.username');
             $password = input('post.password');
             if (!$username) {
-                $this->error('用户名不能为空');
+                $this->error('用户名不能为空',null,'',1);
             }
             if (!$password) {
-                $this->error('密码不能为空');
+                $this->error('密码不能为空',null,'',1);
             }
 
             $info = db('admin')->field('id,username,password')->where('username', $username)->find();
             if (!$info) {
-                $this->error('用户不存在');
+                $this->error('用户不存在',null,'',1);
             }
 
             if (md5($password) != $info['password']) {
@@ -33,12 +33,12 @@ class Login extends Controller {
                 session('user_id', $info['id']);
                 //记录登录信息
                 Loader::model('Admin')->editInfo(1, $info['id']);
-                $this->success('登入成功', 'index/index');
+                $this->success('登入成功', 'index/index','',1);
             }
         } else {
 
             if (session('user_name')) {
-                $this->success('您已登入', 'index/index');
+                $this->success('您已登入', 'index/index','',1);
             }
             $this->view->engine->layout(false);
             return $this->fetch('login');
@@ -51,7 +51,7 @@ class Login extends Controller {
     public function logout() {
         session('user_name', null);
         session('user_id', null);
-        $this->success('退出成功', 'login/index');
+        $this->success('退出成功', 'login/index','',1);
     }
 
     public function test(){
@@ -62,24 +62,23 @@ class Login extends Controller {
      * 注册账号
      */
     public function regist() {
-        var_dump(input(''));exit;
         if ($_POST['dosubmit']) {
             $username = input('post.username');
             $password = input('post.password');
             if (!$username) {
-                $this->error('用户名不能为空');
+                $this->error('用户名不能为空',null,'',1);
             }
             if (!$password) {
-                $this->error('密码不能为空');
+                $this->error('密码不能为空',null,'',1);
             }
 
             $info = db('admin')->field('id,username,password')->where('username', $username)->find();
             if (!$info) {
-                $this->error('用户不存在');
+                $this->error('用户不存在',null,'',1);
             }
 
             if (md5($password) != $info['password']) {
-                $this->error('密码不正确');
+                $this->error('密码不正确',null,'',1);
             } else {
                 session('user_name', $info['username']);
                 session('user_id', $info['id']);
@@ -90,7 +89,7 @@ class Login extends Controller {
             }
         } else {
             if (session('user_name')) {
-                $this->success('您已登入', 'index/index');
+                $this->success('您已登入', 'index/index','',1);
             }
             $this->view->engine->layout(false);
             return $this->fetch('login');

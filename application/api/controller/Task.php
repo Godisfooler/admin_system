@@ -8,19 +8,26 @@ class Task extends Controller
 
     //任务列表
     public function taskList(){
-        $list = db('task_list')->select();
+        $start = input('page');
+        $limit = input('pageSize');
+        $start = $start-1>0?$start-1:0;
+        if(empty($limit)){
+            $list = db('task_list')->order('iAddTime DESC')->select();
+        }else{
+            $list = db('task_list')->order('iAddTime DESC')->limit($start*$limit,$limit)->select();
+        }
         $this->result($list,10000,'请求成功','json');
     } 
 
     //创建任务
     public function createTask(){
-        $post = input('post');
         $data = [];
-        $data['sTaskTitle'] = $post['task_title'];
-        $data['sTaskContent'] = $post['task_content'];
-        $data['iPublisher'] = $post['user'];
+        $data['sTaskTitle'] = input('taskname');
+        $data['sTaskContent'] = input('content');
+        $data['sLocation'] = input('location');
+        $data['sContact'] = input('phone');
         $data['iAddTime'] = time();
-        $res = db('task_list')->add($data);
+        $res = db('task_list')->insert($data);
         if($res){
             $this->result([],10000,'请求成功','json');
         }else{
