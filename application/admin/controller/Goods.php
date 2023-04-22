@@ -107,4 +107,26 @@ class Goods extends Common {
         }
     }
 
+    public function goodslist(){
+        $goodslist = db('goods_list a')
+        ->field('a.*,c.sName,u.username')
+        ->join('categorys c','a.pid=c.id')
+        ->join('user_list u','a.uid=u.id')
+        ->select();
+        foreach($goodslist as &$goods){
+            $goods['date'] = date("Y-m-d H:i",$goods['iAddTime']);
+        }
+        $this->assign('goodslist',$goodslist);
+        return $this->fetch();
+    }
+
+    public function goodsdel() {
+        $id = input('id');
+        $res = db('goods_list')->where(['id' => $id])->delete();
+        if ($res) {
+            $this->success('操作成功', url('goodslist'),'',1);
+        } else {
+            $this->error('操作失败',null,'',1);
+        }
+    }
 }

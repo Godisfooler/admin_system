@@ -16,6 +16,18 @@ class Task extends Controller
         }else{
             $list = db('task_list')->order('iAddTime DESC')->limit($start*$limit,$limit)->select();
         }
+        $userlist = db('user_list')->column('id,username');
+        foreach($list as &$l){
+            if($l['iStatus'] == 2){
+                $l['completed'] = true;
+            }else{
+                $l['completed'] = false;
+            }
+            if($l['iReceiver'] > 0){
+                $l['receiver'] = isset($userlist[$l['iReceiver']])?$userlist[$l['iReceiver']]:'';
+            }
+            $l['iPublisher'] = isset($userlist[$l['iPublisher']])?$userlist[$l['iPublisher']]:'';
+        }
         $this->result($list,10000,'请求成功','json');
     } 
 
@@ -37,15 +49,21 @@ class Task extends Controller
 
     //接单
     public function reciveTask(){
-        $id = input('post.id');
+        $id = input('post.taskid');
         $uid = input('post.uid');
-        db('task_list')->where(['id'=>$id])->update(['iStatus'=>1,'iReceiver'=>$uid]);
+        $res = db('task_list')->where(['id'=>$id])->update(['iStatus'=>1,'iReceiver'=>$uid]);
+        if($res){
+            $this->result([],10000,'请求成功','json');
+        }
     }
 
     //完成任务
     public function completeTask(){
-        $id = input('post.id');
-        db('task_list')->where(['id'=>$id])->update(['iStatus'=>2]);
+        $id = input('post.taskid');
+        $res = db('task_list')->where(['id'=>$id])->update(['iStatus'=>2]);
+        if($res){
+            $this->result([],10000,'请求成功','json');
+        }
     }
 
     //删除任务

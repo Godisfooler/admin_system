@@ -1,6 +1,6 @@
 <div class="page-content">
     <div class="col-sm-6 pull-right">
-        <span class="btn btn-sm btn-primary pull-right" onclick="javascript:window.location.href = 'newsDetail'">
+        <span class="btn btn-sm btn-primary pull-right" onclick="javascript:window.location.href = 'goodsdetail'">
             添加
             <i class="icon-reply icon-only"></i>
         </span>
@@ -19,10 +19,15 @@
                     <table id="simple-table" class="table  table-bordered table-hover">
                         <thead>
                             <tr>
+                                <!-- <th class="detail-col" width="20">排序</th> -->
                                 <th class="detail-col">序号</th>
-                                <th>标题</th>
-                                <th>是否为封面</th>
-                                <th>添加时间</th>
+                                <th>名称</th>
+                                <th>分类</th>
+                                <th>价格</th>
+                                <th>发布人</th>
+                                <th>发布时间</th>
+                                <!-- <th class="hidden-480">data</th> -->
+                                <!-- <th class="hidden-480">状态</th> -->
                                 <th>管理员操作</th>
                             </tr>
                         </thead>
@@ -31,21 +36,28 @@
 
                         <form action="" method="post" name="myform">
 
-                            {volist name="newslist" id="vo"}
+                            {volist name="goodslist" id="vo"}
                             <tr>
+                                <!-- <td><input type="text" name="listorder[{$vo.id}]" value="{$vo.listorder}" width="10"></td> -->
                                 <td>{$vo.id}</td>
-                                <td>{$vo.sTitle}</td>
-                                <td>{$vo.iType?'是':'否'}</td>
-                                <td>{$vo.iAddTime|date="Y-m-d H:i",###}</td>
+                                <td>{$vo.sGoodsName}</td>
+                                <td>{$vo.sName}</td>
+                                <!-- <td>{$vo['c']}/{$vo['a']}</td> -->
+                                <!-- <td class="hidden-480">
+                                    <span class="label label-sm label-warning">{$vo.data}</span>
+                                </td> -->
+                                <td>{$vo.sPrice}</td>
+                                <td>{$vo.username}</td>
+                                <td>{$vo.date}</td>
                                 <td>
                                     <div class="hidden-sm hidden-xs btn-group">
-                                        <a href='{:url("newsdetail","id=$vo[id]")}' 
+                                        <!-- <a href='{:url("goodsdetail","id=$vo[id]")}' 
                                            <span class="btn btn-xs btn-info">
                                                 <i class="ace-icon fa fa-pencil bigger-120"></i>
                                             </span>
-                                        </a>
+                                        </a> -->
 
-                                        <a href='javascript:void(0)' onclick="return alert_del('{:url(\"delnews\",\"id=$vo[id]\")}', '确认要删除『 id={$vo.id} 』这条记录吗？');"
+                                        <a href='javascript:void(0)' onclick="return alert_del('{:url(\"goodsdel\",\"id=$vo[id]\")}', '确认要删除『 id={$vo.id} 』这条记录吗？');"
                                            <span class="btn btn-xs btn-danger" >
                                                 <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                             </span>
@@ -65,7 +77,7 @@
 
 
                                                 <li>
-                                                    <a href='{:url("newsdetail","id=$vo[id]")}' class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                    <a href='{:url("info","id=$vo[id]")}' class="tooltip-success" data-rel="tooltip" title="Edit">
                                                         <span class="green">
                                                             <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                                         </span>
@@ -90,6 +102,10 @@
                     </table>
                 </div><!-- /.span -->
             </div><!-- /.row -->
+
+
+
+
             <!-- PAGE CONTENT ENDS -->
         </div><!-- /.col -->
     </div><!-- /.row -->

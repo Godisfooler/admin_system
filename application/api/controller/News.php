@@ -5,8 +5,16 @@ use think\Controller;
 //商品
 class News extends Controller
 {
+    //轮播图新闻
+    public function coverlist(){
+        $list = db('news_list')->where(['iType'=>1])->order('iAddTime DESC')->limit(5)->select();
+        foreach($list as &$l){
+            $l['img'] = 'http://'.$_SERVER['SERVER_NAME'].ltrim($l['sImgUrl'],'.');
+            $l['newsId'] = $l['id'];
+        }
+        $this->result($list,10000,'请求成功','json');
+    }
 
-    //任务列表
     public function newsList(){
         $start = input('page');
         $limit = input('pageSize');

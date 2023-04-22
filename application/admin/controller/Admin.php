@@ -203,6 +203,8 @@ class Admin extends Common {
         $data = [];
         $data['sTitle'] = input('title');
         $data['sContent'] = input('content');
+        $data['iType'] = input('cover_select');
+        $data['sImgUrl'] = $this->uploadFile();
         $data['iAddTime'] = time();
         if(!empty($id)){
             $res = db('news_list')->where(['id'=>$id])->update($data);
@@ -214,5 +216,19 @@ class Admin extends Common {
         } else {
             $this->error('修改失败',null,'',1);
         }
+    }
+    
+    public function uploadFile(){
+        $file = request()->file('image');
+        if($file){
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                // 成功上传后 获取上传信息
+                $filePath = $info->getSaveName(); 
+            }else{
+            }
+        }
+        $filePath = './uploads/'.str_replace('\\','/',$filePath);
+        return $filePath;
     }
 }
