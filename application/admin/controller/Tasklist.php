@@ -40,19 +40,22 @@ class Tasklist extends Common {
         return $this->fetch();
     }
 
-    //新闻保存
+    //任务保存
     public function tasksave(){
         $id = input('id');
         $data = [];
-        $data['sTitle'] = input('title');
-        $data['sContent'] = input('content');
+        $data['sTaskTitle'] = input('title');
+        $data['sTaskContent'] = input('content');
+        $data['sLocation'] = input('sLocation');
+        $data['sContact'] = input('sContact');
         $data['iAddTime'] = time();
         if(!empty($id)){
-            $res = db('news_list')->where(['id'=>$id])->update($data);
+            $res = db('task_list')->where(['id'=>$id])->update($data);
         }else{
-            $res = db('news_list')->insert($data);
+            $res = db('task_list')->insert($data);
         }
         if ($res) {
+            $data['iPublisher'] = 1;
             $this->success('修改成功', url('newslist'),'',1);
         } else {
             $this->error('修改失败',null,'',1);

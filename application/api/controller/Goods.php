@@ -24,4 +24,11 @@ class Goods extends Controller
         $list = db('goods_list')->where(['pid'=>$categoryid])->select();
         $this->result($list,10000,'请求成功','json');
     }
+
+    //已发布商品列表
+    public function publishlist(){
+        $uid = empty(input('uid'))?1:input('uid');
+        $list = db('goods_list')->where(['uid'=>$uid])->select();
+        $this->result($list,10000,'请求成功','json');
+    }
 }
