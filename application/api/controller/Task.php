@@ -10,11 +10,16 @@ class Task extends Controller
     public function taskList(){
         $start = input('page');
         $limit = input('pageSize');
+        $uid = input('uid');
+        $map = [];
+        if(!empty($uid)){
+            $map['iReceiver'] = $uid;
+        }
         $start = $start-1>0?$start-1:0;
         if(empty($limit)){
-            $list = db('task_list')->order('iAddTime DESC')->select();
+            $list = db('task_list')->where($map)->order('iAddTime DESC')->select();
         }else{
-            $list = db('task_list')->order('iAddTime DESC')->limit($start*$limit,$limit)->select();
+            $list = db('task_list')->where($map)->order('iAddTime DESC')->limit($start*$limit,$limit)->select();
         }
         $userlist = db('user_list')->column('id,username');
         foreach($list as &$l){
