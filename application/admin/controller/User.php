@@ -43,7 +43,6 @@ class User extends Common {
         $data = [];
         $data['username'] = input('username');
         $data['iIntegral'] = input('iIntegral');
-        $data['sAddress'] = input('address');
         if(!empty($id)){
             $res = db('user_list')->where(['id'=>$id])->update($data);
         }

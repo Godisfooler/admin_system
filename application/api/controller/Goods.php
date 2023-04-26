@@ -5,13 +5,7 @@ use think\Controller;
 //商品
 class Goods extends Controller
 {
-
-    //任务列表
-    public function taskList(){
-        $list = db('task_list')->select();
-        $this->result($list,10000,'请求成功','json');
-    } 
-
+    //获取商品分类
     public function getCategory(){
         $list = db('categorys')->select();
         foreach($list as &$l){
@@ -24,9 +18,10 @@ class Goods extends Controller
         $this->result($return,10000,'请求成功','json');
     }
 
+    //获取商品列表
     public function getGoodslist(){
         $categoryid = input('categoryid');
-        $list = db('goods_list')->where(['pid'=>$categoryid])->select();
+        $list = db('goods_list')->where(['pid'=>$categoryid,'iStatus'=>1])->select();
         foreach($list as &$l){
             $l['sImgUrls'] = 'http://'.$_SERVER['SERVER_NAME'].$l['sImgUrls'];
         }
@@ -36,7 +31,7 @@ class Goods extends Controller
     //已发布商品列表
     public function publishlist(){
         $uid = empty(input('uid'))?1:input('uid');
-        $list = db('goods_list')->where(['uid'=>$uid])->select();
+        $list = db('goods_list')->where(['uid'=>$uid])->order('iAddTime DESC')->select();
         $return = [];
         $textArr = [1=>'待成交',2=>'已成交'];
         foreach($list as &$l){
@@ -50,11 +45,13 @@ class Goods extends Controller
         $this->result($return,10000,'请求成功','json');
     }
 
+    //商品图片上传
     public function goodsImgUp(){
         $path = $this->uploadFile('images/goods');
         $this->result(['savepath'=>$path],10000,'请求成功','json');
     }
 
+    //商品发布
     public function goodspublish(){
         $imgArr = json_decode(input('imgs'),true);
         $data = [];
@@ -72,6 +69,7 @@ class Goods extends Controller
         }
     }
 
+    //图片上传接收
     public function uploadFile($path='avatarUrl'){
         $file = request()->file('image');
         if($file){
@@ -86,83 +84,58 @@ class Goods extends Controller
         return $filePath;
     }
 
-    public function downloadImage($url)
-    {
-        // 获取图片数据
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $data = curl_exec($ch);
-        curl_close($ch);
-
-        // 创建文件夹并保存图片
-        $imageFolder = ROOT_PATH.'public'. DS .'/images/goods/';
-        if (!is_dir($imageFolder)) {
-            mkdir($imageFolder);
-        }
-        $imageName = uniqid() . '.jpg';
-        $imagePath = $imageFolder . $imageName;
-
-        $file = fopen($imagePath, 'w');
-        fwrite($file, $data);
-        fclose($file);
-        return $imageName;
-    }
-
+    //获取商品分类
     public function getCategorylist(){
         $list = db('categorys')->where(['parentid'=>['GT',0]])->select();
         $this->result($list,10000,'请求成功','json');
     }
 
+    //商品详情
     public function goodsDetail(){
         $id = input('goodsid');
         $res = db('goods_list')->find($id);
         $res['sImgUrls'] = 'http://'.$_SERVER['SERVER_NAME'].ltrim($res['sImgUrls'],'.');
         $imgArr = json_decode($res['sImgList'],true);
         $imgUrl = [];
-        foreach($imgArr as $img){
-            $imgUrl[] = 'http://'.$_SERVER['SERVER_NAME'].ltrim($img,'.');
+        if(!empty($imgArr)){
+            foreach($imgArr as $img){
+                $imgUrl[] = 'http://'.$_SERVER['SERVER_NAME'].ltrim($img,'.');
+            }
         }
         $res['images'] = $imgUrl;
         $this->result($res,10000,'请求成功','json');
     }
 
+    //获取地址列表
     public function getAddress(){
         $uid = input('uid');
         $list = db('user_address')->where(['uid'=>$uid])->select();
-        // $res['address'] = $res['sAddress'];
-        // $res['isDefault'] = 1;
-        // $res['name'] = '测试用';
-        // $res['phoneNumber'] = '15680590891';
-        // $res['phone'] = '15680590891';
-        // $res['cityName'] = "甘南藏族自治州";
-        // $res['countryCode'] = "chn";
-        // $res['countryName'] = "中国";
-        // $res['detailAddress'] = "松日鼎盛大厦0层0号";
-        // $res['districtCode'] = "623026";
-        // $res['districtName'] = "碌曲县";
         $this->result($list,10000,'请求成功','json');
     }
 
+    //保存地址
     public function saveAddress(){
+        $isEdit = input('isEdit');
+        $id = input('id');
         $data['uid'] = input('uid');
         $data['address'] = input('address');
         $data['isDefault'] = input('isDefault')?1:0;
+        if($data['isDefault'] == 1){
+            db('user_address')->where(['uid'=>$data['uid']])->update(['isDefault'=>0]);
+        }
         $data['name'] = input('username');
         $data['phoneNumber'] = input('phone');
         $data['detailAddress'] = input('detail_address');
         $data['iAddTime'] = time();
-
-        // $data['phone'] = input('phone');
-        // $data['cityName'] = "甘南藏族自治州";
-        // $data['countryCode'] = "chn";
-        // $data['countryName'] = "中国";
-        // $data['districtCode'] = "623026";
-        // $data['districtName'] = "碌曲县";
-        $res = db('user_address')->insert($data);
+        if($isEdit == 'false'){
+            $res = db('user_address')->insert($data);
+        }else{
+            $res = db('user_address')->where(['id'=>$id])->update($data);
+        }
         $this->result([],10000,'请求成功','json');
     }
 
+    //商品购买
     public function buyGoods(){
         $data['iGoodsId'] = input('goodsid');
         $data['uid'] = input('uid');
@@ -181,27 +154,23 @@ class Goods extends Controller
         $data['sPhone'] = input('phone');
         $data['iAddTime'] = time();
         db('order')->insert($data);
+        db('goods_list')->where(['id'=>$data['iGoodsId']])->update(['iStatus'=>2]);
+
         $task = [];
         $goods = db('goods_list')->find($data['iGoodsId'])['sGoodsName'];
         $task['sTaskTitle'] = '配送 '.$goods;
         $task['sLocation'] = $data['sAddress'];
         $task['sContact'] = $data['sPhone'];
         $task['iPublisher'] = $data['uid'];
-        db('task_list')->insert($task);
+        $task['iAddTime'] = time();
+        $res = db('task_list')->insert($task);
+        $this->result($res,10000,'请求成功','json');
     }
-//iAddTime: 1682274054
-// iStatus: 1
-// id: 7
-// pid: 3
-// sDescribe: "11"
-// sGoodsName: "发布测试"
-// sImgList: "["\/images\/goods\/6445770652ac3.jpg"]"
-// sImgUrls: "http://admin.test.com/images/goods/6445770652ac3.jpg"
-// sPrice: "222"
-// uid: 7
+
+    //订单列表
     public function orderlist(){
         $uid = input('uid');
-        $list = db('order')->where(['uid'=>$uid])->select();
+        $list = db('order')->where(['uid'=>$uid])->order('iAddTime DESC')->select();
         foreach($list as &$l){
             $goods = db('goods_list')->find($l['iGoodsId']);
             $l['sImgUrls'] = 'http://'.$_SERVER['SERVER_NAME'].$goods['sImgUrls'];
@@ -212,16 +181,28 @@ class Goods extends Controller
         $this->result($return,10000,'请求成功','json');
     }
 
+    //获取积分额度
     public function getAmount(){
         $uid = input('uid');
         $res = db('user_list')->field('iIntegral')->find($uid);
         $this->result($res,10000,'请求成功','json');
     }
 
+    //删除地址
     public function delAddress(){
         $id = input('id');
         $res = db('user_address')->delete($id);
         if($res){
+            $this->result($res,10000,'请求成功','json');
+        }
+    }
+
+    //获取地址详情
+    public function getAddressDetail(){
+        $id = input('id');
+        $res = db('user_address')->find($id);
+        if($res){
+            $res['phone'] = $res['phoneNumber'];
             $this->result($res,10000,'请求成功','json');
         }
     }
