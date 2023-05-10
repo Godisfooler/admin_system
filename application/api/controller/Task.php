@@ -43,6 +43,7 @@ class Task extends Controller
         $data['sTaskContent'] = input('content');
         $data['sLocation'] = input('location');
         $data['sContact'] = input('phone');
+        $data['iPublisher'] = input('uid');
         $data['iAddTime'] = time();
         $res = db('task_list')->insert($data);
         if($res){
@@ -76,4 +77,23 @@ class Task extends Controller
         $id = input('post.id');
         db('task_list')->delete($id);
     }
+
+    //任务详情
+    public function taskDetail(){
+        $id = input('post.taskid');
+        $res = db('task_list')->find($id);
+        $userlist = db('user_list')->column('id,username');
+        if($res['iStatus'] == 2){
+            $res['completed'] = true;
+        }else{
+            $res['completed'] = false;
+        }
+        if($res['iReceiver'] > 0){
+            $res['receiver'] = isset($userlist[$res['iReceiver']])?$userlist[$res['iReceiver']]:'';
+        }
+        $res['iPublisher'] = isset($userlist[$res['iPublisher']])?$userlist[$res['iPublisher']]:'';
+
+        $this->result($res,10000,'请求成功','json');
+    }
+
 }

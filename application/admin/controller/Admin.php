@@ -231,4 +231,21 @@ class Admin extends Common {
         $filePath = './uploads/'.str_replace('\\','/',$filePath);
         return $filePath;
     }
+
+    //论坛管理
+    public function forumlist(){
+        $list = db('comment_list')->order('iAddTime DESC')->select();
+
+        $this->assign('comment_list',$list);
+        return $this->fetch();
+    }
+
+    public function delComment($id){
+        $res = db('comment_list')->delete($id);
+        if ($res) {
+            $this->success('删除成功', url('forumlist'),'',1);
+        } else {
+            $this->error('删除失败',null,'',1);
+        }
+    }
 }

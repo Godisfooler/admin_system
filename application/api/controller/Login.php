@@ -17,6 +17,8 @@ class Login extends Controller
         if($res){
             header('uid:'.$res['id']);
             header('username:'.$res['username']);
+            $nickname = empty($res['nickname'])?$res['username']:$res['nickname'];
+            header('nickname:'.$nickname);
             $this->result([],10000,'登录成功','json');
         }else{
             $this->result($res,10001,'账号或密码错误','json');
@@ -62,16 +64,39 @@ class Login extends Controller
         $this->result($list,10000,'请求成功','json');
     }
 
-    public function getGoodslist(){
-        $categoryid = input('categoryid');
-        $list = db('goods_list')->where(['pid'=>$categoryid])->select();
-        $this->result($list,10000,'请求成功','json');
+    public function getUserInfo(){
+        $uid = input('uid');
+        $res = db('user_list')->find($uid);
+        $res['avatarUrl'] = 'http://'.$_SERVER['SERVER_NAME'].ltrim($res['avatarUrl'],'.');
+        $this->result($res,10000,'请求成功','json');
     }
 
-    //已发布商品列表
-    public function publishlist(){
-        $uid = empty(input('uid'))?1:input('uid');
-        $list = db('goods_list')->where(['uid'=>$uid])->select();
-        $this->result($list,10000,'请求成功','json');
+    public function saveUserInfo(){
+        $post = input('');
+        $uid = $post['uid'];
+        unset($post['uid']);
+        $res = db('user_list')->where(['id'=>$uid])->update($post);
+        if($res){
+            $this->result($res,10000,'请求成功','json');
+        }
+    }
+
+    public function uploadAvatar(){
+        $uid = input('uid');
+        $imgUrl = $this->uploadFile();
+        $data['avatarUrl'] = $imgUrl;
+        $res = db('user_list')->where(['id'=>$uid])->update($data);
+        if($res){
+            $this->result($res,10000,'请求成功','json');
+        }
+    }
+
+    public function savePassword(){
+        $uid = input('uid');
+        $data['password'] = md5(input('password'));
+        $res = db('user_list')->where(['id'=>$uid])->update($data);
+        if($res){
+            $this->result($res,10000,'请求成功','json');
+        }
     }
 }
